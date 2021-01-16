@@ -3,26 +3,39 @@ import random
 
 class BankAccount:
     def __init__(self):
-        self._customer_number = None
         self.card_number = None
         self.card_pin = None
         self.entered_card_number = None
         self.entered_card_pin = None
         self.answer = None
         self.balance = 0
-
+        self._checksum = 0
+        
     @staticmethod
     def print_main_banner():
         print("1. Create an account\n2. Log into account\n0. Exit")
-
+    
     @staticmethod
     def print_second_banner():
         print("1. Balance\n2. Log out\n0. Exit")
 
     def create_card_number(self):
-        self._customer_number = str(random.randint(1, 999999999)).zfill(9)
-        self.card_number = "400000" + self._customer_number + str(random.randint(1, 9))
-
+        self.card_number = "400000" + str(random.randint(1, 999999999)).zfill(9)
+        self._checksum = 0
+        for element, number in enumerate(self.card_number, 1):
+            number = int(number)
+            if element % 2 != 0:
+                number *= 2
+                if number > 9:
+                    number -= 9
+                    self._checksum += number
+                else:
+                    self._checksum += number
+            else:
+                self._checksum += number
+        self._checksum = str([0 if self._checksum % 10 == 0 else 10 - self._checksum % 10][0])
+        self.card_number += self._checksum
+        
     def create_card_pin(self):
         self.card_pin = str(random.randint(0, 9999)).zfill(4)
 
